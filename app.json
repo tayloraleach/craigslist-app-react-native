@@ -1,0 +1,12 @@
+{
+  "name": "craigslist-app",
+  "displayName": "craigslist-app",
+  "expo": {
+    "name": "craigslist-app",
+    "slug": "craigslist-app",
+    "version": "1.0.0",
+    "assetBundlePatterns": [
+      "**/*"
+    ]
+  }
+}
