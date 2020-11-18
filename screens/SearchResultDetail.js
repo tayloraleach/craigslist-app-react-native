@@ -23,6 +23,7 @@ function SearchResultDetail({route}) {
         {images.map(uri => {
           return (
             <Image
+              key={uri}
               resizeMode={'cover'}
               style={{
                 width: '47%',

@@ -15,7 +15,7 @@ function SearchResultItem({item}) {
         alignItems: 'center',
         width: '100%',
         borderWidth: 1,
-        borderColor: '#ccc',
+        borderColor: colors.grey,
         flexDirection: 'row',
         marginBottom: 10,
       }}>

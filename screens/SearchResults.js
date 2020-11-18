@@ -5,25 +5,37 @@ import colors from '../lib/colors';
 import fetcher from '../lib/fetcher';
 
 function SearchResultsScreen({route}) {
-  const {searchTerm} = route.params;
-  const [loading, setLoading] = React.useState(false);
+  const {
+    searchTerm,
+    location,
+    hasImages,
+    postedToday,
+    searchTitlesOnly,
+    ownerType,
+  } = route.params;
+  const [loading, setLoading] = React.useState(true);
   const [results, setResults] = React.useState([]);
 
   const getResults = async () => {
     const data = await fetcher(
-      'http://192.168.1.73:5000/search/vancouver/speakers',
+      `http://192.168.1.73:5000/search?location=${location}&searchTerm=${searchTerm}&hasImages=${hasImages}&postedToday=${postedToday}&searchTitlesOnly=${searchTitlesOnly}&ownerType=${ownerType}`,
     );
     return data;
   };
 
-  //   React.useEffect(() => {
-  //     (async () => {
-  //       const data = await getResults();
-  //       console.log(data);
-  //       setResults(data);
-  //       setLoading(false);
-  //     })();
-  //   }, []);
+  React.useEffect(
+    () => {
+      if (!results.length) {
+        (async () => {
+          const data = await getResults();
+          setResults(data);
+          setLoading(false);
+        })();
+      }
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [],
+  );
 
   const DATA = [
     {
@@ -166,9 +178,9 @@ function SearchResultsScreen({route}) {
               marginHorizontal: 10,
               marginTop: 10,
             }}
-            data={DATA}
+            data={results}
             renderItem={renderItem}
-            keyExtractor={item => item.id}
+            keyExtractor={item => item.title + item.price}
           />
         </SafeAreaView>
       )}
