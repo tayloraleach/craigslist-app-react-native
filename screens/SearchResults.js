@@ -1,10 +1,10 @@
 import * as React from 'react';
-import {FlatList, SafeAreaView, View, ActivityIndicator} from 'react-native';
+import {FlatList, View} from 'react-native';
+import Loader from '../components/Loader';
 import SearchResultItem from '../components/SearchResultItem';
-import colors from '../lib/colors';
 import fetcher from '../lib/fetcher';
 
-function SearchResultsScreen({route}) {
+function SearchResults({payload}) {
   const {
     searchTerm,
     location,
@@ -12,7 +12,7 @@ function SearchResultsScreen({route}) {
     postedToday,
     searchTitlesOnly,
     ownerType,
-  } = route.params;
+  } = payload;
   const [loading, setLoading] = React.useState(true);
   const [results, setResults] = React.useState([]);
 
@@ -25,8 +25,9 @@ function SearchResultsScreen({route}) {
 
   React.useEffect(
     () => {
-      if (!results.length) {
+      if (payload && searchTerm) {
         (async () => {
+          setLoading(true);
           const data = await getResults();
           setResults(data);
           setLoading(false);
@@ -34,7 +35,7 @@ function SearchResultsScreen({route}) {
       }
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [],
+    [payload],
   );
 
   const DATA = [
@@ -163,29 +164,28 @@ function SearchResultsScreen({route}) {
   const renderItem = ({item}) => <SearchResultItem item={item} />;
 
   return (
-    <View
-      style={{
-        flex: 1,
-      }}>
+    <View style={styles.root}>
       {loading ? (
-        <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
-          <ActivityIndicator size={'large'} color={colors.purple} />
-        </View>
+        <Loader />
       ) : (
-        <SafeAreaView style={{width: '100%'}}>
-          <FlatList
-            style={{
-              marginHorizontal: 10,
-              marginTop: 10,
-            }}
-            data={results}
-            renderItem={renderItem}
-            keyExtractor={item => item.title + item.price}
-          />
-        </SafeAreaView>
+        <FlatList
+          style={styles.results}
+          data={results}
+          renderItem={renderItem}
+          keyExtractor={item => item.id}
+        />
       )}
     </View>
   );
 }
 
-export default SearchResultsScreen;
+const styles = {
+  root: {
+    flex: 1,
+  },
+  results: {
+    marginTop: 10,
+  },
+};
+
+export default SearchResults;

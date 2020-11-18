@@ -3,7 +3,6 @@ import {createStackNavigator, TransitionPresets} from '@react-navigation/stack';
 import HomeScreen from '../screens/Home';
 import SavedSearchesScreen from '../screens/Saved';
 import colors from '../lib/colors';
-import SearchResultsScreen from '../screens/SearchResults';
 import SearchResultDetail from '../screens/SearchResultDetail';
 
 const Stack = createStackNavigator();
@@ -24,11 +23,6 @@ const MainStackNavigator = () => {
         name="Home"
         options={{title: 'Search Craigslist'}}
         component={HomeScreen}
-      />
-      <Stack.Screen
-        name="SearchResults"
-        options={({route}) => ({title: route.params.searchTerm})}
-        component={SearchResultsScreen}
       />
       <Stack.Screen
         name="SearchResultDetail"

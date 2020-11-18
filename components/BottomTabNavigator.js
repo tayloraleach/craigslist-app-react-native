@@ -10,6 +10,7 @@ const BottomTabNavigator = () => {
   return (
     <Tab.Navigator
       tabBarOptions={{
+        keyboardHidesTabBar: true,
         activeTintColor: colors.purple,
         inactiveTintColor: colors.grey,
       }}

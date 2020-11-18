@@ -2,15 +2,19 @@ import * as React from 'react';
 import {Text, View, TouchableOpacity} from 'react-native';
 import colors from '../lib/colors';
 
-function ButtonGroup({items, selectedItem, onChange}) {
+function ButtonGroup({items, selectedItem, onChange, height}) {
   const [selected, setSelected] = React.useState(selectedItem);
   const handleChange = item => {
     setSelected(item);
     onChange(item);
   };
+  const styledContainer = {
+    ...styles.container,
+    height,
+  };
 
   return (
-    <View style={styles.container}>
+    <View style={styledContainer}>
       {items.map((item, x) => {
         let styledItem = styles.item;
         let styledText = styles.text;
@@ -35,7 +39,6 @@ function ButtonGroup({items, selectedItem, onChange}) {
 const styles = {
   container: {
     borderWidth: 1,
-    height: 30,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-evenly',
