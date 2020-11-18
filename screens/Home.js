@@ -7,23 +7,54 @@ import CheckBox from '@react-native-community/checkbox';
 import ButtonGroup from '../components/ButtonGroup';
 import SearchResults from './SearchResults';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-
-const OWNER_TYPE = {
-  ALL: 'All',
-  OWNER: 'Owner',
-  DEALER: 'Dealer',
-};
+import {CATEGORIES, OWNER_TYPE} from '../lib/constants';
 
 function HomeScreen({navigation}) {
   const [searchTerm, setSearchTerm] = React.useState('');
   const [location, setLocation] = React.useState('vancouver');
+  const [category, setCategory] = React.useState(CATEGORIES[0]);
   const [hasImages, setHasImages] = React.useState(false);
   const [postedToday, setPostedToday] = React.useState(false);
   const [searchTitlesOnly, setSearchTitlesOnly] = React.useState(false);
   const [ownerType, setOwnerType] = React.useState(OWNER_TYPE.ALL);
+  const [minPrice, setMinPrice] = React.useState(null);
+  const [maxPrice, setMaxPrice] = React.useState(null);
   const [searchPayload, setSearchPayload] = React.useState(null);
-  const [minPrie, setMinPrice] = React.useState(null);
-  const [maxPrie, setMaxPrice] = React.useState(null);
+
+  const resetInputs = () => {
+    setSearchTerm('');
+    setHasImages(false);
+    setPostedToday(false);
+    setSearchTitlesOnly(false);
+    setOwnerType(OWNER_TYPE.ALL);
+    setMaxPrice(null);
+    setMinPrice(null);
+    setSearchPayload(null);
+    setCategory(CATEGORIES[0]);
+  };
+
+  React.useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <View style={{flexDirection: 'row'}}>
+          <Icon
+            size={22}
+            style={{marginRight: 15}}
+            onPress={() => alert('save to searches')}
+            name={'favorite'}
+            color={'pink'}
+          />
+          <Icon
+            size={22}
+            style={{marginRight: 15}}
+            onPress={() => resetInputs()}
+            name={'delete'}
+            color={'white'}
+          />
+        </View>
+      ),
+    });
+  }, [navigation]);
 
   return (
     <View style={styles.root}>
@@ -41,11 +72,12 @@ function HomeScreen({navigation}) {
         <View style={styles.categoryPickerContainer}>
           <Picker
             dropdownIconColor={colors.purple}
-            selectedValue={location}
+            selectedValue={category}
             style={styles.locationPicker}
-            onValueChange={itemValue => setLocation(itemValue)}>
-            <Picker.Item label="Vancouver" value="vancouver" />
-            <Picker.Item label="Comox Valley" value="comoxvalley" />
+            onValueChange={cat => setCategory(cat)}>
+            {CATEGORIES.map(cat => {
+              return <Picker.Item label={cat} value={cat} key={cat} />;
+            })}
           </Picker>
         </View>
       </View>
@@ -56,14 +88,14 @@ function HomeScreen({navigation}) {
             keyboardType="numeric"
             placeholder="$ min"
             onChangeText={val => setMinPrice(val)}
-            value={minPrie}
+            value={minPrice}
             style={styles.price}
           />
           <TextInput
             keyboardType="numeric"
             placeholder="$ max"
             onChangeText={val => setMaxPrice(val)}
-            value={maxPrie}
+            value={maxPrice}
             style={styles.maxPrice}
           />
         </View>
@@ -129,7 +161,6 @@ function HomeScreen({navigation}) {
           style={styles.cancelButton}
           onPress={() => {
             setSearchTerm('');
-            setSearchPayload(null);
           }}>
           <Icon name={'close'} size={22} color={colors.grey} />
         </TouchableOpacity>
@@ -157,6 +188,8 @@ function HomeScreen({navigation}) {
         <SearchResults
           payload={{
             searchTerm,
+            minPrice,
+            maxPrice,
             location,
             hasImages,
             postedToday,
@@ -197,7 +230,6 @@ const styles = {
   togglesContainer: {flexDirection: 'row', flexWrap: 'wrap'},
   checkBoxContainer: {flexDirection: 'row', alignItems: 'center'},
   searchContainer: {
-    marginTop: 5,
     justifyContent: 'center',
     alignItems: 'center',
     flexDirection: 'row',

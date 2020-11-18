@@ -21,7 +21,9 @@ const MainStackNavigator = () => {
     <Stack.Navigator screenOptions={screenOptionStyle}>
       <Stack.Screen
         name="Home"
-        options={{title: 'Search Craigslist'}}
+        options={{
+          title: 'Search Craigslist',
+        }}
         component={HomeScreen}
       />
       <Stack.Screen

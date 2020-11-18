@@ -11,15 +11,23 @@ function SearchResults({payload}) {
     hasImages,
     postedToday,
     searchTitlesOnly,
+    minPrice,
+    maxPrice,
     ownerType,
   } = payload;
   const [loading, setLoading] = React.useState(true);
   const [results, setResults] = React.useState([]);
 
   const getResults = async () => {
-    const data = await fetcher(
-      `http://192.168.1.73:5000/search?location=${location}&searchTerm=${searchTerm}&hasImages=${hasImages}&postedToday=${postedToday}&searchTitlesOnly=${searchTitlesOnly}&ownerType=${ownerType}`,
-    );
+    let url = `http://192.168.1.73:5000/search?location=${location}`;
+    url += `&searchTerm=${searchTerm}`;
+    url += `&hasImages=${hasImages}`;
+    url += `&postedToday=${postedToday}`;
+    url += `&searchTitlesOnly=${searchTitlesOnly}`;
+    url += `&ownerType=${ownerType}`;
+    url += `&minPrice=${minPrice}`;
+    url += `&maxPrice=${maxPrice}`;
+    const data = await fetcher(url);
     return data;
   };
 
