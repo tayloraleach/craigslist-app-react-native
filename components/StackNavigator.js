@@ -4,6 +4,8 @@ import HomeScreen from '../screens/Home';
 import SavedSearchesScreen from '../screens/Saved';
 import colors from '../lib/colors';
 import SearchResultDetail from '../screens/SearchResultDetail';
+import {Linking} from 'react-native';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 
 const Stack = createStackNavigator();
 
@@ -17,6 +19,15 @@ const screenOptionStyle = {
 };
 
 const MainStackNavigator = () => {
+  const handleOpenURL = url => {
+    Linking.canOpenURL(url).then(supported => {
+      if (supported) {
+        Linking.openURL(url);
+      } else {
+        console.log("Don't know how to open URI: " + url);
+      }
+    });
+  };
   return (
     <Stack.Navigator screenOptions={screenOptionStyle}>
       <Stack.Screen
@@ -28,7 +39,20 @@ const MainStackNavigator = () => {
       />
       <Stack.Screen
         name="SearchResultDetail"
-        options={({route}) => ({title: route.params.title})}
+        options={({route}) => {
+          return {
+            headerRight: () => (
+              <Icon
+                style={{marginRight: 15}}
+                onPress={() => handleOpenURL(route.params.url)}
+                name="launch"
+                color="#fff"
+                size={22}
+              />
+            ),
+            title: route.params.url,
+          };
+        }}
         component={SearchResultDetail}
       />
     </Stack.Navigator>

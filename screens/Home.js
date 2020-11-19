@@ -44,7 +44,7 @@ function HomeScreen({navigation}) {
             style={{marginRight: 15}}
             onPress={() => alert('save to searches')}
             name={'favorite'}
-            color={'pink'}
+            color={colors.pink}
           />
           <Icon
             size={22}

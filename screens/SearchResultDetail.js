@@ -19,7 +19,7 @@ function SearchResultDetail({route}) {
           const data = await fetcher(encodeURI(url));
           setListingData(data);
         } catch (e) {
-          console.log('Maybe it was delted or expired?', url, e);
+          console.log('Maybe it was deleted or expired?', url, e);
         }
       }
     })();
@@ -31,7 +31,8 @@ function SearchResultDetail({route}) {
     <View style={styles.root}>
       {hood ? <Text style={styles.hood}>{hood}</Text> : null}
       <Text style={styles.title}>{title}</Text>
-      <Text style={styles.price}>{price}</Text>
+      {price ? <Text style={styles.price}>{price}</Text> : null}
+
       {listingData ? (
         <ScrollView style={{flex: 1}}>
           <HTML
@@ -86,7 +87,7 @@ const styles = {
     marginTop: 5,
   },
   price: {fontSize: 20, color: colors.purple, marginBottom: 20},
-  title: {fontSize: 28, fontWeight: 'bold', marginBottom: 10},
+  title: {fontSize: 26, fontWeight: 'bold', marginBottom: 10},
   hood: {fontSize: 14, color: colors.purple},
 };
 export default SearchResultDetail;
