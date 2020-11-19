@@ -20,6 +20,7 @@ function HomeScreen({navigation}) {
   const [minPrice, setMinPrice] = React.useState(null);
   const [maxPrice, setMaxPrice] = React.useState(null);
   const [searchPayload, setSearchPayload] = React.useState(null);
+  const [results, setResults] = React.useState(null);
 
   const resetInputs = () => {
     setSearchTerm('');
@@ -170,7 +171,10 @@ function HomeScreen({navigation}) {
           onPress={() => {
             Keyboard.dismiss();
             if (searchTerm) {
+              setSearchTerm(searchTerm);
               setSearchPayload({
+                minPrice,
+                maxPrice,
                 searchTerm,
                 location,
                 hasImages,
@@ -184,18 +188,15 @@ function HomeScreen({navigation}) {
         </TouchableOpacity>
       </View>
 
+      <Text>{results ? `${results.length} Results` : 'No Results'}</Text>
+
       {searchPayload && (
         <SearchResults
-          payload={{
-            searchTerm,
-            minPrice,
-            maxPrice,
-            location,
-            hasImages,
-            postedToday,
-            searchTitlesOnly,
-            ownerType,
+          results={results}
+          onResultsLoad={data => {
+            setResults(data);
           }}
+          payload={searchPayload}
         />
       )}
     </View>
@@ -233,6 +234,7 @@ const styles = {
     justifyContent: 'center',
     alignItems: 'center',
     flexDirection: 'row',
+    marginBottom: 5,
   },
   searchBar: {
     height: 40,
