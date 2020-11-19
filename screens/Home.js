@@ -152,7 +152,7 @@ function HomeScreen({navigation}) {
 
       <View style={styles.searchContainer}>
         <TextInput
-          autoFocus
+        //   autoFocus
           placeholder="Search..."
           onChangeText={term => setSearchTerm(term)}
           value={searchTerm}

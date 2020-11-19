@@ -3,6 +3,7 @@ import {Image, Text, View, TouchableOpacity} from 'react-native';
 import colors from '../lib/colors';
 import {useNavigation} from '@react-navigation/native';
 import moment from 'moment-mini';
+import Badge from './Badge';
 
 function SearchResultItem({item}) {
   const {title, price, datePosted, hood, images} = item;
@@ -30,7 +31,7 @@ function SearchResultItem({item}) {
           <Text style={styles.metaText}>{moment(datePosted).fromNow()}</Text>
         </View>
         <View style={styles.costContainer}>
-          <Text style={styles.costText}>{price}</Text>
+          <Badge text={price} size={12} containerStyles={styles.badgeStyles} />
         </View>
       </View>
     </TouchableOpacity>
@@ -75,7 +76,11 @@ const styles = {
     borderTopLeftRadius: 2,
     backgroundColor: colors.purple,
   },
-  costText: {color: 'white'},
+  badgeStyles: {
+    paddingVertical: 0,
+    paddingHorizontal: 2,
+    borderTopLeftRadius: 2,
+  },
 };
 
 export default SearchResultItem;

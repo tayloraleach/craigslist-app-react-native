@@ -33,7 +33,7 @@ const MainStackNavigator = () => {
       <Stack.Screen
         name="Search"
         options={{
-          title: 'Craigslist',
+          title: 'Craigslist: For Sale',
         }}
         component={HomeScreen}
       />
@@ -64,7 +64,7 @@ const SavedSearchStackNavigator = () => {
     <Stack.Navigator screenOptions={screenOptionStyle}>
       <Stack.Screen
         name="SavedSearches"
-        options={{title: 'Saved Searches'}}
+        options={{title: 'Saved'}}
         component={SavedSearchesScreen}
       />
     </Stack.Navigator>

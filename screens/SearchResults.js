@@ -3,14 +3,7 @@ import {FlatList, View} from 'react-native';
 import Loader from '../components/Loader';
 import SearchResultItem from '../components/SearchResultItem';
 import fetcher from '../lib/fetcher';
-
-function usePrevious(value) {
-  const ref = React.useRef();
-  React.useEffect(() => {
-    ref.current = value;
-  });
-  return ref.current;
-}
+import usePrevious from '../lib/usePrevious';
 
 function SearchResults({payload, onResultsLoad, results}) {
   const {
