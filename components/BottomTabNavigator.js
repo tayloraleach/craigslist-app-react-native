@@ -18,7 +18,7 @@ const BottomTabNavigator = () => {
         tabBarIcon: ({focused, color, size}) => {
           let iconName;
 
-          if (route.name === 'Home') {
+          if (route.name === 'Search') {
             iconName = focused ? 'search' : 'search';
           } else if (route.name === 'Saved') {
             iconName = focused ? 'favorite' : 'favorite';
@@ -27,7 +27,7 @@ const BottomTabNavigator = () => {
           return <Icon name={iconName} size={size} color={color} />;
         },
       })}>
-      <Tab.Screen name="Home" component={MainStackNavigator} />
+      <Tab.Screen name="Search" component={MainStackNavigator} />
       <Tab.Screen name="Saved" component={SavedSearchStackNavigator} />
     </Tab.Navigator>
   );

@@ -24,6 +24,7 @@ function HomeScreen({navigation}) {
 
   const resetInputs = () => {
     setSearchTerm('');
+    setResults(null);
     setHasImages(false);
     setPostedToday(false);
     setSearchTitlesOnly(false);
@@ -171,7 +172,6 @@ function HomeScreen({navigation}) {
           onPress={() => {
             Keyboard.dismiss();
             if (searchTerm) {
-              setSearchTerm(searchTerm);
               setSearchPayload({
                 minPrice,
                 maxPrice,
@@ -188,7 +188,7 @@ function HomeScreen({navigation}) {
         </TouchableOpacity>
       </View>
 
-      <Text>{results ? `${results.length} Results` : 'No Results'}</Text>
+      {results && searchPayload && <Text>{results.length} Results</Text>}
 
       {searchPayload && (
         <SearchResults
@@ -246,7 +246,7 @@ const styles = {
     flex: 1,
   },
   searchButton: {
-    width: 80,
+    width: 60,
     height: 40,
     borderRadius: 2,
     backgroundColor: colors.purple,
