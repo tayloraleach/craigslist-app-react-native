@@ -96,7 +96,6 @@ function SearchResultDetail({route, navigation}) {
                 let isNew = true;
                 if (JSON.parse(savedListings)) {
                   const saved = JSON.parse(savedListings);
-                  //   console.log(saved);
                   saved.forEach(element => {
                     if (element.id === listing.id) {
                       isNew = false;
@@ -148,20 +147,24 @@ function SearchResultDetail({route, navigation}) {
             html={`<div class="root">${listingData.data.contentBody}</div>`}
             contentWidth={contentWidth}
           />
-          <ScrollView contentContainerStyle={styles.scrollView}>
-            {images.map(uri => {
-              return (
-                <Image
-                  key={uri}
-                  resizeMode={'cover'}
-                  style={{...styles.image, width: contentWidth / 2 - 12.5}}
-                  source={{
-                    uri,
-                  }}
-                />
-              );
-            })}
-          </ScrollView>
+          {images.length ? (
+            <ScrollView contentContainerStyle={styles.scrollView}>
+              {images.map(uri => {
+                return (
+                  <Image
+                    key={uri}
+                    resizeMode={'cover'}
+                    style={{...styles.image, width: contentWidth / 2 - 12.5}}
+                    source={{
+                      uri,
+                    }}
+                  />
+                );
+              })}
+            </ScrollView>
+          ) : (
+            <Text style={{color: colors.grey, paddingTop: 10}}>(No Imgaes)</Text>
+          )}
         </ScrollView>
       ) : (
         <Loader />

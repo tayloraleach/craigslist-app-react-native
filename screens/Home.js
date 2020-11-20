@@ -22,6 +22,8 @@ function HomeScreen({navigation}) {
   const [searchPayload, setSearchPayload] = React.useState(null);
   const [results, setResults] = React.useState(null);
 
+  const searchRef = React.useRef();
+
   const resetInputs = () => {
     setSearchTerm('');
     setResults(null);
@@ -57,6 +59,24 @@ function HomeScreen({navigation}) {
       ),
     });
   }, [navigation]);
+
+  const submitSearch = () => {
+    Keyboard.dismiss();
+    setResults(null);
+    if (searchTerm) {
+      setSearchPayload({
+        minPrice,
+        maxPrice,
+        searchTerm,
+        category,
+        location,
+        hasImages,
+        postedToday,
+        searchTitlesOnly,
+        ownerType,
+      });
+    }
+  };
 
   return (
     <View style={styles.root}>
@@ -153,9 +173,8 @@ function HomeScreen({navigation}) {
       <View style={styles.searchContainer}>
         <TextInput
           //   autoFocus
-          onSubmitEditing={() => {
-            // also setseatchpayload
-          }}
+          ref={searchRef}
+          onSubmitEditing={submitSearch}
           placeholder="Search..."
           onChangeText={term => setSearchTerm(term)}
           value={searchTerm}
@@ -165,6 +184,7 @@ function HomeScreen({navigation}) {
           activeOpacity={0.75}
           style={styles.cancelButton}
           onPress={() => {
+            searchRef.current.focus();
             setSearchTerm('');
           }}>
           <Icon name={'close'} size={22} color={colors.grey} />
@@ -172,23 +192,7 @@ function HomeScreen({navigation}) {
         <TouchableOpacity
           activeOpacity={0.75}
           style={styles.searchButton}
-          onPress={() => {
-            Keyboard.dismiss();
-            setResults(null);
-            if (searchTerm) {
-              setSearchPayload({
-                minPrice,
-                maxPrice,
-                searchTerm,
-                category,
-                location,
-                hasImages,
-                postedToday,
-                searchTitlesOnly,
-                ownerType,
-              });
-            }
-          }}>
+          onPress={submitSearch}>
           <Icon name={'search'} size={20} color={colors.grey} />
         </TouchableOpacity>
       </View>

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {FlatList, View} from 'react-native';
+import {FlatList, Image, View} from 'react-native';
 import Loader from '../components/Loader';
 import SearchResultItem from '../components/SearchResultItem';
 import fetcher from '../lib/fetcher';

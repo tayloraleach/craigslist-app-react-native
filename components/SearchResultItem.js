@@ -9,6 +9,12 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 function SearchResultItem({item, onLongPressCallback}) {
   const {title, price, datePosted, hood, images} = item;
   const navigation = useNavigation();
+  let imageSource = require('../images/placeholder-img.jpg');
+  if (images[0]) {
+    imageSource = {
+      uri: images[0],
+    };
+  }
   return (
     <TouchableOpacity
       onLongPress={async (e, x) => {
@@ -28,15 +34,7 @@ function SearchResultItem({item, onLongPressCallback}) {
       onPress={() => navigation.navigate('SearchResultDetail', item)}
       activeOpacity={0.75}
       style={styles.root}>
-      {images[0] && (
-        <Image
-          resizeMode={'cover'}
-          style={styles.image}
-          source={{
-            uri: images[0],
-          }}
-        />
-      )}
+      <Image resizeMode={'cover'} style={styles.image} source={imageSource} />
       <View style={styles.container}>
         <Text>
           {title} {hood ? '- ' : ''}
