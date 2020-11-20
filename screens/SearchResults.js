@@ -12,6 +12,7 @@ function SearchResults({payload, onResultsLoad, results}) {
     hasImages,
     postedToday,
     searchTitlesOnly,
+    category,
     minPrice,
     maxPrice,
     ownerType,
@@ -29,6 +30,7 @@ function SearchResults({payload, onResultsLoad, results}) {
     url += `&ownerType=${ownerType}`;
     url += `&minPrice=${minPrice}`;
     url += `&maxPrice=${maxPrice}`;
+    url += `&category=${category}`;
     const data = await fetcher(url);
     onResultsLoad(data);
     setLoading(false);

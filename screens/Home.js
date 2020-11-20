@@ -152,7 +152,10 @@ function HomeScreen({navigation}) {
 
       <View style={styles.searchContainer}>
         <TextInput
-        //   autoFocus
+          //   autoFocus
+          onSubmitEditing={() => {
+            // also setseatchpayload
+          }}
           placeholder="Search..."
           onChangeText={term => setSearchTerm(term)}
           value={searchTerm}
@@ -171,11 +174,13 @@ function HomeScreen({navigation}) {
           style={styles.searchButton}
           onPress={() => {
             Keyboard.dismiss();
+            setResults(null);
             if (searchTerm) {
               setSearchPayload({
                 minPrice,
                 maxPrice,
                 searchTerm,
+                category,
                 location,
                 hasImages,
                 postedToday,

@@ -4,12 +4,27 @@ import colors from '../lib/colors';
 import {useNavigation} from '@react-navigation/native';
 import moment from 'moment-mini';
 import Badge from './Badge';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-function SearchResultItem({item}) {
+function SearchResultItem({item, onLongPressCallback}) {
   const {title, price, datePosted, hood, images} = item;
   const navigation = useNavigation();
   return (
     <TouchableOpacity
+      onLongPress={async (e, x) => {
+        // if this item id exists in the async storage, remove it
+        try {
+          let saved = await AsyncStorage.getItem('listings');
+          const savedListings = JSON.parse(saved);
+          const filtered = savedListings.filter(listing => {
+            return listing.id !== item.id;
+          });
+          await AsyncStorage.setItem('listings', JSON.stringify(filtered));
+        } catch (ev) {
+          console.log('Error getting listings from async storage', ev);
+        }
+        onLongPressCallback();
+      }}
       onPress={() => navigation.navigate('SearchResultDetail', item)}
       activeOpacity={0.75}
       style={styles.root}>

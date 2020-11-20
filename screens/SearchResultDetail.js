@@ -16,18 +16,43 @@ import Badge from '../components/Badge';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-function SearchResultDetail({route}) {
+function SearchResultDetail({route, navigation}) {
   // TODO: This might break for expired listings
   const {
     title,
     images,
     price,
     hood,
+    id,
     datePosted,
     url: listingURL,
   } = route.params;
 
   const [listingData, setListingData] = React.useState(null);
+  const [isFavorited, setIsFavorited] = React.useState(false);
+
+  React.useEffect(() => {
+    // Some state issue here for saving. also TODO if colored, remove from listings
+    const unsubscribe = navigation.addListener('focus', async () => {
+      try {
+        const data = await AsyncStorage.getItem('listings');
+        if (data) {
+          const saved = JSON.parse(data);
+          setIsFavorited(false);
+          saved.forEach(listing => {
+            if (listing.id === id) {
+              setIsFavorited(true);
+            }
+          });
+        }
+      } catch (e) {
+        console.log('failed to get keys');
+      }
+    });
+
+    // Return the function to unsubscribe from the event so it gets removed on unmount
+    return unsubscribe;
+  }, [id, isFavorited, navigation]);
 
   React.useEffect(() => {
     (async () => {
@@ -41,7 +66,7 @@ function SearchResultDetail({route}) {
         }
       }
     })();
-  }, [listingData, listingURL]);
+  }, [isFavorited, listingData, listingURL]);
 
   const contentWidth = useWindowDimensions().width;
 
@@ -57,6 +82,7 @@ function SearchResultDetail({route}) {
           {price ? <Badge text={price} size={16} /> : null}
           <TouchableOpacity
             onPress={async () => {
+              setIsFavorited(true);
               try {
                 // Get all saved listings, if any
                 // await AsyncStorage.clear();
@@ -69,7 +95,19 @@ function SearchResultDetail({route}) {
                 let newListings = [listing];
 
                 if (JSON.parse(savedListings)) {
-                  newListings = [listing, ...JSON.parse(savedListings)];
+                  const saved = JSON.parse(savedListings);
+                  let isNew = true;
+                  //   console.log(saved);
+                  saved.forEach(element => {
+                    if (element.id === listing.id) {
+                      isNew = false;
+                    }
+                  });
+                  if (isNew) {
+                    newListings = [listing, ...saved];
+                  } else {
+                    newListings = [...saved];
+                  }
                 }
 
                 await AsyncStorage.setItem(
@@ -81,7 +119,12 @@ function SearchResultDetail({route}) {
                 console.log(e, '=====)');
               }
             }}>
-            <Icon style={{marginLeft: 10}} name="favorite" size={24} />
+            <Icon
+              style={{marginLeft: 10}}
+              name="favorite"
+              color={isFavorited ? colors.purple : colors.grey}
+              size={24}
+            />
           </TouchableOpacity>
         </View>
       </View>

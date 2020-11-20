@@ -1,67 +1,50 @@
 import * as React from 'react';
-import {View, Dimensions, Text, TouchableOpacity} from 'react-native';
+import {View, Dimensions, Text} from 'react-native';
 import {TabView, SceneMap} from 'react-native-tab-view';
 import {TabBar} from 'react-native-tab-view';
 import colors from '../lib/colors';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import SearchResultItem from '../components/SearchResultItem';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import Loader from '../components/Loader';
 import {useNavigation} from '@react-navigation/native';
+import {ScrollView} from 'react-native-gesture-handler';
 
-const FirstRoute = () => {
+const SavedListingsTab = () => {
   const [listings, setListings] = React.useState(false);
   const navigation = useNavigation();
 
-  React.useEffect(() => {
-    const unsubscribe = navigation.addListener('focus', async () => {
-      try {
-        console.log('fetstoedimtes');
-        const data = await AsyncStorage.getItem('listings');
-        if (data) {
-          setListings(JSON.parse(data));
-        }
-      } catch (e) {
-        console.log('failed to get keys');
+  const getSavedListings = async () => {
+    try {
+      const data = await AsyncStorage.getItem('listings');
+      if (data) {
+        setListings(JSON.parse(data));
       }
-    });
+    } catch (e) {
+      console.log('failed to get keys');
+    }
+  };
 
+  React.useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', getSavedListings);
     // Return the function to unsubscribe from the event so it gets removed on unmount
     return unsubscribe;
   }, [navigation]);
 
   return (
-    <View style={styles.scene}>
-      {listings && listings.length ? (
-        listings.map(listing => {
-          const {id} = listing;
-          return (
-            <View style={{position: 'relative'}}>
-              <View style={{marginRight: 30}}>
-                <SearchResultItem key={id} item={{...listing}} />
-              </View>
-              <TouchableOpacity
-                onPress={() => {
-                  alert('ass');
-                }}
-                style={{
-                  position: 'absolute',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  right: 0,
-                  width: 30,
-                  height: '100%',
-                  bottom: 10,
-                }}>
-                <Icon name="cancel" size={24} color={'#ef0000'} />
-              </TouchableOpacity>
-            </View>
-          );
-        })
-      ) : (
-        <Loader />
-      )}
-    </View>
+    <ScrollView contentContainerStyle={styles.scene}>
+      {listings && listings.length
+        ? listings.map(listing => {
+            const {id} = listing;
+            return (
+              <SearchResultItem
+                key={id}
+                item={{...listing}}
+                onLongPressCallback={getSavedListings}
+              />
+            );
+          })
+        : null}
+    </ScrollView>
   );
 };
 
@@ -81,7 +64,7 @@ function SavedSearchesScreen({navigation}) {
   ]);
 
   const renderScene = SceneMap({
-    listings: FirstRoute,
+    listings: SavedListingsTab,
     searches: SecondRoute,
   });
 
