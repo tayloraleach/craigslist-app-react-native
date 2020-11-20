@@ -82,21 +82,20 @@ function SearchResultDetail({route, navigation}) {
           {price ? <Badge text={price} size={16} /> : null}
           <TouchableOpacity
             onPress={async () => {
-              setIsFavorited(true);
               try {
-                // Get all saved listings, if any
                 // await AsyncStorage.clear();
                 let savedListings = await AsyncStorage.getItem('listings');
 
+                // Listing to be saved
                 const listing = {
                   ...route.params,
                 };
 
                 let newListings = [listing];
 
+                let isNew = true;
                 if (JSON.parse(savedListings)) {
                   const saved = JSON.parse(savedListings);
-                  let isNew = true;
                   //   console.log(saved);
                   saved.forEach(element => {
                     if (element.id === listing.id) {
@@ -106,9 +105,15 @@ function SearchResultDetail({route, navigation}) {
                   if (isNew) {
                     newListings = [listing, ...saved];
                   } else {
-                    newListings = [...saved];
+                    // Remove
+                    newListings = saved.filter(x => {
+                      return x.id !== id;
+                    });
                   }
+                  setIsFavorited(isNew);
                 }
+
+                console.log(newListings);
 
                 await AsyncStorage.setItem(
                   'listings',
