@@ -7,9 +7,11 @@ import CheckBox from '@react-native-community/checkbox';
 import ButtonGroup from '../components/ButtonGroup';
 import SearchResults from './SearchResults';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import {CATEGORIES, OWNER_TYPE} from '../lib/constants';
 
 function HomeScreen({navigation}) {
+  const [isPayloadFav, setIsPayloadFav] = React.useState(false);
   const [searchTerm, setSearchTerm] = React.useState('');
   const [location, setLocation] = React.useState('vancouver');
   const [category, setCategory] = React.useState(CATEGORIES[0]);
@@ -38,15 +40,63 @@ function HomeScreen({navigation}) {
   };
 
   React.useLayoutEffect(() => {
+    const handleSavePayloadToFavorites = async () => {
+      if (searchTerm) {
+        const payload = {
+          minPrice,
+          maxPrice,
+          searchTerm,
+          category,
+          location,
+          hasImages,
+          postedToday,
+          searchTitlesOnly,
+          ownerType,
+        };
+
+        try {
+          // await AsyncStorage.clear();
+          let savedPayloads = await AsyncStorage.getItem('payloads');
+
+          let newPayloads = [payload];
+
+          let isNew = true;
+          if (JSON.parse(savedPayloads)) {
+            const saved = JSON.parse(savedPayloads);
+            saved.forEach(savedPayload => {
+              if (JSON.stringify(savedPayload) === JSON.stringify(payload)) {
+                isNew = false;
+              }
+            });
+            if (isNew) {
+              newPayloads = [payload, ...saved];
+            } else {
+              // Remove
+              newPayloads = saved.filter(x => {
+                return JSON.stringify(x) !== JSON.stringify(payload);
+              });
+            }
+            //   setIsFavorited(isNew);
+          }
+
+          console.log(newPayloads);
+
+          await AsyncStorage.setItem('payloads', JSON.stringify(newPayloads));
+        } catch (ev) {
+          console.log(ev);
+        }
+      }
+    };
+
     navigation.setOptions({
       headerRight: () => (
         <View style={{flexDirection: 'row'}}>
           <Icon
             size={22}
             style={{marginRight: 15}}
-            onPress={() => alert('save to searches')}
-            name={'favorite'}
-            color={colors.pink}
+            onPress={handleSavePayloadToFavorites}
+            name={'save'}
+            color={'white'}
           />
           <Icon
             size={22}
@@ -58,7 +108,19 @@ function HomeScreen({navigation}) {
         </View>
       ),
     });
-  }, [navigation]);
+  }, [
+    category,
+    hasImages,
+    location,
+    maxPrice,
+    minPrice,
+    navigation,
+    ownerType,
+    postedToday,
+    searchPayload,
+    searchTerm,
+    searchTitlesOnly,
+  ]);
 
   const submitSearch = () => {
     Keyboard.dismiss();

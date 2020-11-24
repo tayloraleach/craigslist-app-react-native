@@ -163,7 +163,9 @@ function SearchResultDetail({route, navigation}) {
               })}
             </ScrollView>
           ) : (
-            <Text style={{color: colors.grey, paddingTop: 10}}>(No Imgaes)</Text>
+            <Text style={{color: colors.grey, paddingTop: 10}}>
+              (No Images)
+            </Text>
           )}
         </ScrollView>
       ) : (
