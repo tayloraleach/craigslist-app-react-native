@@ -8,6 +8,10 @@ const SavedListingsTab = () => {
   const [listings, setListings] = React.useState(false);
   const navigation = useNavigation();
 
+  React.useEffect(() => {
+    getSavedListings();
+  }, []);
+
   const getSavedListings = async () => {
     try {
       const data = await AsyncStorage.getItem('listings');

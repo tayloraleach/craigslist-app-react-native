@@ -5,6 +5,7 @@ import {ScrollView} from 'react-native-gesture-handler';
 import {Text, View, TouchableOpacity} from 'react-native';
 import colors from '../lib/colors';
 import Badge from './Badge';
+import BadgeMini from './BadgeMini';
 
 const SavedPayloadsTab = () => {
   const [payloads, setPayloads] = React.useState(false);
@@ -34,7 +35,7 @@ const SavedPayloadsTab = () => {
         return x !== index;
       });
       await AsyncStorage.setItem('payloads', JSON.stringify(filtered));
-      getSavedPayloads()
+      getSavedPayloads();
     } catch (ev) {
       console.log('Error removing payload from async storage', ev);
     }
@@ -70,19 +71,44 @@ const SavedPayloadsTab = () => {
                   });
                 }}
                 key={key}
-                style={{
-                  marginBottom: 5,
-                  padding: 10,
-                  borderWidth: 1,
-                  borderRadius: 2,
-                  borderColor: colors.grey,
-                }}>
+                style={styles.root}>
                 <Badge size={20} text={searchTerm} />
-                <Text>{category}</Text>
-                <Text>{minPrice}</Text>
-                <Text>{maxPrice}</Text>
-                <Text>{location}</Text>
-                <Text>{ownerType}</Text>
+                <View style={styles.row}>
+                  {category ? (
+                    <BadgeMini
+                      containerStyles={styles.mini}
+                      text={category === 'all' ? 'All Categories' : category}
+                    />
+                  ) : null}
+                  {ownerType ? (
+                    <BadgeMini
+                      containerStyles={styles.mini}
+                      text={ownerType === 'All' ? ownerType : `By ${ownerType}`}
+                    />
+                  ) : null}
+                  {location ? (
+                    <BadgeMini containerStyles={styles.mini} text={location} />
+                  ) : null}
+
+                  {minPrice && maxPrice ? (
+                    <BadgeMini
+                      containerStyles={styles.mini}
+                      text={`$${minPrice} - $${maxPrice}`}
+                    />
+                  ) : null}
+                  {minPrice && !maxPrice ? (
+                    <BadgeMini
+                      containerStyles={styles.mini}
+                      text={`min ${minPrice}`}
+                    />
+                  ) : null}
+                  {maxPrice && !minPrice ? (
+                    <BadgeMini
+                      containerStyles={styles.mini}
+                      text={`max ${maxPrice}`}
+                    />
+                  ) : null}
+                </View>
               </TouchableOpacity>
             );
           })
@@ -92,6 +118,23 @@ const SavedPayloadsTab = () => {
 };
 
 const styles = {
+  root: {
+    marginBottom: 10,
+    padding: 10,
+    borderWidth: 1,
+    borderRadius: 2,
+    borderColor: colors.grey,
+  },
+  row: {
+    flexDirection: 'row',
+    paddingTop: 5,
+  },
+  text: {
+    color: 'black',
+  },
+  mini: {
+    marginRight: 5,
+  },
   scene: {
     flex: 1,
     backgroundColor: 'white',

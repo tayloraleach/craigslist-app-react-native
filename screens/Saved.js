@@ -12,13 +12,13 @@ const initialLayout = {width: Dimensions.get('window').width};
 function SavedSearchesScreen({navigation}) {
   const [index, setIndex] = React.useState(0);
   const [routes] = React.useState([
-    {key: 'listings', title: 'Listings'},
     {key: 'searches', title: 'Searches'},
+    {key: 'listings', title: 'Listings'},
   ]);
 
   const renderScene = SceneMap({
-    listings: SavedListingsTab,
     searches: SavedPayloadsTab,
+    listings: SavedListingsTab,
   });
 
   return (
