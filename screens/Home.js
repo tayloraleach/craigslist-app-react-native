@@ -10,8 +10,8 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {CATEGORIES, CATEGORY_CODES, OWNER_TYPE} from '../lib/constants';
 
-function HomeScreen({navigation}) {
-  const [isPayloadFav, setIsPayloadFav] = React.useState(false);
+function HomeScreen({navigation, route}) {
+  //   const [isPayloadFav, setIsPayloadFav] = React.useState(false);
   const [searchTerm, setSearchTerm] = React.useState('');
   const [location, setLocation] = React.useState('vancouver');
   const [hasImages, setHasImages] = React.useState(false);
@@ -28,35 +28,64 @@ function HomeScreen({navigation}) {
 
   const categoryCode = CATEGORY_CODES[category][ownerType.toLocaleLowerCase()];
 
+  //   If passed params (from saved payloads, etc)
+  React.useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      // If a new saved payload is passed from the params
+      if (
+        route.params &&
+        route.params.void &&
+        JSON.stringify(route.params) !== JSON.stringify(payload)
+      ) {
+        const {params} = route;
+        const resultsCopy = results ? [...results] : null;
+        resetInputs(); // this wipes results, might not need to do this just here just in case
+        setResults(resultsCopy);
+        setSearchTerm(params.searchTerm);
+        setMinPrice(params.minPrice);
+        setMaxPrice(params.maxPrice);
+        setHasImages(params.hasImages);
+        setCategory(params.category);
+        setPostedToday(params.postedToday);
+        setSearchTitlesOnly(params.searchTitlesOnly);
+        setLocation(params.location);
+        setOwnerType(params.ownerType);
+        setSearchPayload(params);
+      }
+    });
+    return unsubscribe;
+  }, [navigation, payload, results, route, searchTerm]);
+
   const resetInputs = () => {
+    // reset route params
     setSearchTerm('');
     setResults(null);
     setHasImages(false);
     setPostedToday(false);
     setSearchTitlesOnly(false);
-    setOwnerType(OWNER_TYPE.ALL);
     setMaxPrice(null);
     setMinPrice(null);
+    setOwnerType(OWNER_TYPE.ALL);
     setSearchPayload(null);
     setCategory(CATEGORIES[0]);
+  };
+
+  const payload = {
+    minPrice,
+    maxPrice,
+    searchTerm,
+    category,
+    location,
+    hasImages,
+    postedToday,
+    searchTitlesOnly,
+    ownerType,
+    categoryCode,
   };
 
   React.useLayoutEffect(() => {
     const handleSavePayloadToFavorites = async () => {
       if (searchTerm) {
-        const payload = {
-          minPrice,
-          maxPrice,
-          searchTerm,
-          category,
-          location,
-          hasImages,
-          postedToday,
-          searchTitlesOnly,
-          ownerType,
-          categoryCode,
-        };
-
         try {
           // await AsyncStorage.clear();
           let savedPayloads = await AsyncStorage.getItem('payloads');
@@ -99,12 +128,15 @@ function HomeScreen({navigation}) {
             style={{marginRight: 15}}
             onPress={handleSavePayloadToFavorites}
             name={'save'}
-            color={'white'}
+            color={colors.pink}
           />
           <Icon
             size={22}
             style={{marginRight: 15}}
-            onPress={() => resetInputs()}
+            onPress={() => {
+              resetInputs();
+              navigation.setParams({void: false});
+            }}
             name={'delete'}
             color={'white'}
           />
@@ -120,7 +152,9 @@ function HomeScreen({navigation}) {
     minPrice,
     navigation,
     ownerType,
+    payload,
     postedToday,
+    route.params,
     searchPayload,
     searchTerm,
     searchTitlesOnly,
@@ -191,7 +225,7 @@ function HomeScreen({navigation}) {
           <ButtonGroup
             height={30}
             items={[OWNER_TYPE.ALL, OWNER_TYPE.OWNER, OWNER_TYPE.DEALER]}
-            selectedItem={OWNER_TYPE.ALL}
+            selectedItem={ownerType}
             onChange={value => setOwnerType(value)}
           />
         </View>

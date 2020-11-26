@@ -144,6 +144,7 @@ function SearchResultDetail({route, navigation}) {
                 color: 'black',
               },
             }}
+            textSelectable={true}
             html={`<div class="root">${listingData.data.contentBody}</div>`}
             contentWidth={contentWidth}
           />

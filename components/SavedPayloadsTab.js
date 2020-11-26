@@ -25,6 +25,21 @@ const SavedPayloadsTab = () => {
     }
   };
 
+  const removeSelectedPayload = async index => {
+    // if this item id exists in the async storage, remove it
+    try {
+      let saved = await AsyncStorage.getItem('payloads');
+      const savedPayloads = JSON.parse(saved);
+      const filtered = savedPayloads.filter((payload, x) => {
+        return x !== index;
+      });
+      await AsyncStorage.setItem('payloads', JSON.stringify(filtered));
+      getSavedPayloads()
+    } catch (ev) {
+      console.log('Error removing payload from async storage', ev);
+    }
+  };
+
   React.useEffect(() => {
     const unsubscribe = navigation.addListener('focus', getSavedPayloads);
     // Return the function to unsubscribe from the event so it gets removed on unmount
@@ -34,7 +49,7 @@ const SavedPayloadsTab = () => {
   return (
     <ScrollView contentContainerStyle={styles.scene}>
       {payloads && payloads.length
-        ? payloads.map(search => {
+        ? payloads.map((search, payloadIndex) => {
             const key = JSON.stringify(search);
             const {
               searchTerm,
@@ -47,8 +62,12 @@ const SavedPayloadsTab = () => {
             return (
               <TouchableOpacity
                 activeOpacity={0.75}
+                onLongPress={() => removeSelectedPayload(payloadIndex)}
                 onPress={() => {
-                  console.log(search);
+                  navigation.navigate('Search', {
+                    screen: 'Search',
+                    params: {...search, void: true},
+                  });
                 }}
                 key={key}
                 style={{

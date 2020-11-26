@@ -4,6 +4,13 @@ import colors from '../lib/colors';
 
 function ButtonGroup({items, selectedItem, onChange, height}) {
   const [selected, setSelected] = React.useState(selectedItem);
+
+  React.useEffect(() => {
+    if (selected !== selectedItem) {
+      setSelected(selectedItem);
+    }
+  }, [selected, selectedItem]);
+
   const handleChange = item => {
     setSelected(item);
     onChange(item);
