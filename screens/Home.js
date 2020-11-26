@@ -8,23 +8,25 @@ import ButtonGroup from '../components/ButtonGroup';
 import SearchResults from './SearchResults';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {CATEGORIES, OWNER_TYPE} from '../lib/constants';
+import {CATEGORIES, CATEGORY_CODES, OWNER_TYPE} from '../lib/constants';
 
 function HomeScreen({navigation}) {
   const [isPayloadFav, setIsPayloadFav] = React.useState(false);
   const [searchTerm, setSearchTerm] = React.useState('');
   const [location, setLocation] = React.useState('vancouver');
-  const [category, setCategory] = React.useState(CATEGORIES[0]);
   const [hasImages, setHasImages] = React.useState(false);
   const [postedToday, setPostedToday] = React.useState(false);
   const [searchTitlesOnly, setSearchTitlesOnly] = React.useState(false);
   const [ownerType, setOwnerType] = React.useState(OWNER_TYPE.ALL);
+  const [category, setCategory] = React.useState(CATEGORIES[0]);
   const [minPrice, setMinPrice] = React.useState(null);
   const [maxPrice, setMaxPrice] = React.useState(null);
   const [searchPayload, setSearchPayload] = React.useState(null);
   const [results, setResults] = React.useState(null);
 
   const searchRef = React.useRef();
+
+  const categoryCode = CATEGORY_CODES[category][ownerType.toLocaleLowerCase()];
 
   const resetInputs = () => {
     setSearchTerm('');
@@ -52,6 +54,7 @@ function HomeScreen({navigation}) {
           postedToday,
           searchTitlesOnly,
           ownerType,
+          categoryCode,
         };
 
         try {
@@ -110,6 +113,7 @@ function HomeScreen({navigation}) {
     });
   }, [
     category,
+    categoryCode,
     hasImages,
     location,
     maxPrice,
@@ -125,19 +129,17 @@ function HomeScreen({navigation}) {
   const submitSearch = () => {
     Keyboard.dismiss();
     setResults(null);
-    if (searchTerm) {
-      setSearchPayload({
-        minPrice,
-        maxPrice,
-        searchTerm,
-        category,
-        location,
-        hasImages,
-        postedToday,
-        searchTitlesOnly,
-        ownerType,
-      });
-    }
+    setSearchPayload({
+      minPrice,
+      maxPrice,
+      searchTerm,
+      location,
+      hasImages,
+      postedToday,
+      searchTitlesOnly,
+      ownerType,
+      categoryCode,
+    });
   };
 
   return (
@@ -158,7 +160,9 @@ function HomeScreen({navigation}) {
             dropdownIconColor={colors.purple}
             selectedValue={category}
             style={styles.locationPicker}
-            onValueChange={cat => setCategory(cat)}>
+            onValueChange={cat => {
+              setCategory(cat);
+            }}>
             {CATEGORIES.map(cat => {
               return <Picker.Item label={cat} value={cat} key={cat} />;
             })}
